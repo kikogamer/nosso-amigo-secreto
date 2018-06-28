@@ -1,26 +1,99 @@
 require 'rails_helper'
 
 RSpec.describe MembersController, type: :controller do
+  include Devise::Test::ControllerHelpers
 
-  describe "GET #create" do
+  before(:each) do
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    @current_user = FactoryBot.create(:user)
+    sign_in @current_user
+  end
+
+  describe "POST #create" do
+    before(:each) do
+      @campaign = create(:campaign, user: @current_user)
+      @member_attributes = attributes_for(:member, campaign: @campaign)
+      post :create, params: {member: @member_attributes}
+    end
+
     it "returns http success" do
-      get :create
       expect(response).to have_http_status(:success)
+    end
+
+    it "Create member with right attributes" do
+      expect(Member.last.campaign).to eql(@campaign)
+      expect(Member.last.name).to eql(@member_attributes[:name])
+      expect(Member.last.email).to eql(@member_attributes[:email])
+    end
+
+    it "Create member with associated campaign" do
+      expect(Member.last.campaign.last.user).to eql(@current_user)
+      expect(Member.last.campaign.last.title).to eql(@campaign.title)
+      expect(Member.last.campaign.last.description).to eql(@campaign.description)
+    end
+
+    it "Member belongs to campaign" do
+      post :create, params: {member: @member_attributes}
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(reponse.message).to eql("member already belongs to campaign")
+    end
+
+    it "User cannot insert a member" do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryBot.create(:user)
+      sign_in @user
+      @member_attributes = attributes_for(:member, campaign: @campaign)
+      post :create, params: {member: @member_attributes}
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
-  describe "GET #destroy" do
-    it "returns http success" do
-      get :destroy
+  describe "DELETE #destroy" do
+    before(:each) do
+      request.env["HTTP_ACCEPT"] = 'application/json'
+      campaign = create(:campaign)
+      @new_member_attributes = attributes_for(:member, campaign: campaign)
+      member = create(:member, campaign: campaign)
+    end
+
+    it "member was deleted" do
+      delete :destroy, params: {id: @member.id}
       expect(response).to have_http_status(:success)
+      expect(@campaign.members.where(id: @member.id).present?).to be true
+    end
+
+    it "Member not found" do
+      @id = @member.id + rand(1..999);
+      delete :destroy, params: {id: @id}
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "User cannot delete a member" do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      @user = FactoryBot.create(:user)
+      sign_in @user
+      delete :destroy, params: {id: @member.id}
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
-  describe "GET #update" do
-    it "returns http success" do
-      get :update
+  describe "PUT #update" do
+    before(:each) do
+      @campaign = create(:campaign, user: @current_user)
+      @member = create(:member, campaign: @campaign)
+      @new_member_attributes = attributes_for(:member)
+    end
+
+    it "Member updated" do
+      put :update, params: {id: @member.id, member: @new_member_attributes}
       expect(response).to have_http_status(:success)
     end
-  end
 
+    it "Email exists" do
+      newMember = create(:member, campaign: @campaign)
+      newMember.email = @new_member_attributes[:email]
+      put :update, params: {id: @member.id, member: newMember}
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
 end
