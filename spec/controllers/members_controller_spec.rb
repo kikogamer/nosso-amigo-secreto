@@ -33,11 +33,12 @@ RSpec.describe MembersController, type: :controller do
       expect(Member.last.campaign.description).to eql(@campaign.description)
     end
 
-    #it "Member belongs to campaign" do
-    #  post :create, params: {member: @member_attributes}
-    #  expect(response).to have_http_status(:unprocessable_entity)
-    #  expect(reponse.message).to eql("member already belongs to campaign")
-    #end
+    it "Member belongs to campaign" do
+      post :create, params: {member: @member_attributes}
+      expect(response).to have_http_status(:unprocessable_entity)
+      parsed_body = JSON.parse(response.body)
+      expect(parsed_body['email'][0]).to eql("member already belongs to campaign")
+    end
 
     #it "User cannot insert a member" do
     #  campaign = create(:campaign)
