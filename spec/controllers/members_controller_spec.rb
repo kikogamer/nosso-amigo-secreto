@@ -53,14 +53,14 @@ RSpec.describe MembersController, type: :controller do
   describe "DELETE #destroy" do
     before(:each) do
       request.env["HTTP_ACCEPT"] = 'application/json'
-      campaign = create(:campaign, user: @current_user)
-      @member = create(:member, campaign: campaign)
+      @campaign = create(:campaign, user: @current_user)
+      @member = create(:member, campaign: @campaign)
     end
 
     it "member was deleted" do
       delete :destroy, params: {id: @member.id}
       expect(response).to have_http_status(:success)
-      #expect(@campaign.members.where(id: @member.id).present?).to be true
+      expect(@campaign.members.where(id: @member.id).present?).to be false
     end
 
     it "Member not found" do
