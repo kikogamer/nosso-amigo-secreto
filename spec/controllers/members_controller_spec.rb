@@ -40,12 +40,14 @@ RSpec.describe MembersController, type: :controller do
       expect(parsed_body['email'][0]).to eql("member already belongs to campaign")
     end
 
-    #it "User cannot insert a member" do
-    #  campaign = create(:campaign)
-    #  @member_attributes = attributes_for(:member, campaign_id: campaign.id)
-    #  post :create, params: {member: @member_attributes}
-    #  expect(response).to have_http_status(:forbidden)
-    #nd
+    it "User cannot insert a member" do
+      sign_out @current_user
+      new_user = FactoryBot.create(:user)
+      sign_in new_user
+      member_attributes = attributes_for(:member, campaign_id: @campaign.id)
+      post :create, params: {member: member_attributes}
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe "DELETE #destroy" do

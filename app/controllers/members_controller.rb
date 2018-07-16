@@ -9,10 +9,14 @@ class MembersController < ApplicationController
     @member = Member.new(member_params)
 
     respond_to do |format|
-      if @member.save
-        format.json { render json: @member }
+      if @member.campaign.user != current_user
+        format.json { render json: false, status: :forbidden }
       else
-        format.json { render json: @member.errors, status: :unprocessable_entity }
+        if @member.save
+          format.json { render json: @member }
+        else
+          format.json { render json: @member.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
