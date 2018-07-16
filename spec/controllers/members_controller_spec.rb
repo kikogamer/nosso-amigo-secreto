@@ -91,11 +91,11 @@ RSpec.describe MembersController, type: :controller do
       expect(response).to have_http_status(:success)
     end
 
-    #it "Email exists" do
-    #  member_attributes = attributes_for(:member)
-    #  member_attributes[:email] = FFaker::Internet.email
-    #  put :update, params: {id: @member.id, member: member_attributes}
-    #  expect(response).to have_http_status(:unprocessable_entity)
-    #end
+    it "Email already exists" do
+      new_member = create(:member, campaign: @campaign)
+      @new_member_attributes[:email] = @member.email
+      put :update, params: {id: new_member.id, member: @new_member_attributes}
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
   end
 end
