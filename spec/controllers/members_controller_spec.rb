@@ -69,13 +69,13 @@ RSpec.describe MembersController, type: :controller do
       expect(response).to redirect_to('/')
     end
 
-    #it "User cannot delete a member" do
-    #  @request.env["devise.mapping"] = Devise.mappings[:user]
-    #  @user = FactoryBot.create(:user)
-    #  sign_in @user
-    #  delete :destroy, params: {id: @member.id}
-    #  expect(response).to have_http_status(:forbidden)
-    #end
+    it "User cannot delete a member" do
+      sign_out @current_user
+      new_user = FactoryBot.create(:user)
+      sign_in new_user
+      delete :destroy, params: {id: @member.id}
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe "PUT #update" do
