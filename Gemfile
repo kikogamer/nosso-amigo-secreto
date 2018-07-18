@@ -38,6 +38,10 @@ group :test do
   gem 'ffaker'
 end
 
+group :test do
+  gem 'rspec-sidekiq'
+end
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.5'
   gem 'byebug', platform: :mri
