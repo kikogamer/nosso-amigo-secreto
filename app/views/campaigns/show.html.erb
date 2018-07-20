@@ -98,9 +98,7 @@
   <div class="row btn-actions">
     <div class="col s12 center">
       <div class="col s6 m3 offset-m3 l2 offset-l4">
-        <%= form_for @campaign, method: 'delete', html: {class: 'remove_campaign'} do |f| %>
-          <button type='submit' class="waves-effect waves-light btn grey">Remover</button>
-        <% end %>
+          <a id='confirmDeleteCampaign' class="waves-effect waves-light btn grey">Remover</a>
       </div>
       <div class="col s6 m3 l3">
         <%= form_tag(raffle_campaign_path(@campaign), method: 'post', class: 'raffle_campaign') do %>
@@ -109,4 +107,18 @@
       </div>
     </div>
   </div>
+
+  <!-- modal delete campaign -->
+  <div id="confirmDeleteCampaign" class="modal modal-campaign">
+    <div class="modal-content">
+      <h5 class='white-text'>Deseja realmente remover a campanha?</h5>
+    </div>
+    <div class="modal-footer">
+      <%= form_for @campaign, method: 'delete', html: {class: 'remove_campaign'} do |f| %>
+        <button type='submit' class="modal-close waves-effect waves-green btn-flat green-text">Sim</button>
+        <a class="modal-close waves-effect waves-green btn-flat red-text">Não</a>
+      <% end %>
+    </div>
+  </div>
+
 </div>
