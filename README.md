@@ -41,3 +41,33 @@ $ docker-compose up
 ```
 
 Open your browser and access localhost:3000 to see the home page
+
+## Running the tests
+
+To run the tests run the following in your terminal
+
+```
+$ docker-compose run --rm app bundle exec rspec
+```
+
+## Built With
+
+* [Ruby on Rails](https://rubyonrails.org/) - The web framework used
+* [Puma](https://github.com/puma/puma) - A Ruby Web Server Built For Concurrency
+* [MaterializeCSS](https://github.com/Dogfalo/materialize) - Materialize, a CSS Framework based on material design.
+* [Redis](https://github.com/redis/redis-rb) - A Ruby client that tries to match Redis' API one-to-one, while still providing an idiomatic interface.
+* [Sidekiq](https://github.com/mperham/sidekiq) - Simple, efficient background processing for Ruby.
+* [PostgreSQL](https://www.postgresql.org/) - SGDB
+
+## Authors
+
+* **Ronaldo Carneiro da Silva Filho** - *Initial work* - [kikogamer](https://github.com/kikogamer)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* The bootcamp super full stack team.
+
